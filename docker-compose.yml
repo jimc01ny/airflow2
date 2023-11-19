@@ -3,7 +3,7 @@ version: '3.4'
 
 x-common:
   &common
-  image: apache/airflow:slim-2.5.2-python3.10
+  image: apache/airflow:2.7.3
   user: "${AIRFLOW_UID}:0"
   env_file: 
     - .env
@@ -23,7 +23,7 @@ x-depends-on:
 
 services:
   postgres:
-    image: postgres:15.2
+    image: postgres:16.1
     container_name: postgres
     ports:
       - "5432:5432"
@@ -35,8 +35,7 @@ services:
       - .env
 
   scheduler:
-    <<: *common
-    <<: *depends-on
+    <<: [*common, *depends-on] 
     container_name: airflow-scheduler
     command: scheduler
     restart: on-failure
@@ -44,8 +43,7 @@ services:
       - "8793:8793"
 
   webserver:
-    <<: *common
-    <<: *depends-on
+    <<: [*common, *depends-on] 
     container_name: airflow-webserver
     restart: always
     command: webserver
